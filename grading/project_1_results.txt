@@ -36,7 +36,7 @@ Expected equality of these values:
   the_machine->memory[0]
     Which is: 0
   10
-[  FAILED  ] lmsm_machine_suite.test_store_instruction_works (0 ms)
+[  FAILED  ] lmsm_machine_suite.test_store_instruction_works (1 ms)
 [ RUN      ] lmsm_machine_suite.test_load_instruction_works
 /home/parallels/autograder/csci-366-fall2023/grading/scripts/repos/aidan_rasmussen/lmsm/test/lmsm.cpp:55: Failure
 Expected equality of these values:
@@ -82,7 +82,7 @@ Expected equality of these values:
   the_machine->output_buffer
     Which is: ""
   "10 10 "
-[  FAILED  ] lmsm_machine_suite.test_output_instruction (1 ms)
+[  FAILED  ] lmsm_machine_suite.test_output_instruction (0 ms)
 [ RUN      ] lmsm_machine_suite.test_halt_instruction
 /home/parallels/autograder/csci-366-fall2023/grading/scripts/repos/aidan_rasmussen/lmsm/test/lmsm.cpp:126: Failure
 Expected equality of these values:
