@@ -66,7 +66,7 @@ Expected equality of these values:
   the_machine->program_counter
     Which is: 0
   20
-[  FAILED  ] lmsm_machine_suite.test_branch_if_positive_instruction_works_when_val_zero (1 ms)
+[  FAILED  ] lmsm_machine_suite.test_branch_if_positive_instruction_works_when_val_zero (0 ms)
 [ RUN      ] lmsm_machine_suite.test_branch_if_positive_instruction_works_when_val_positive
 /home/parallels/autograder/csci-366-fall2023/grading/scripts/repos/aidan_rasmussen/lmsm/test/lmsm.cpp:99: Failure
 Expected equality of these values:
@@ -222,7 +222,7 @@ Expected equality of these values:
     Which is: 3
   error_code::ERROR_BAD_STACK
     Which is: 1
-[  FAILED  ] lmsm_machine_suite.test_smax_instruction_enters_error_state_if_not_enough_elts (0 ms)
+[  FAILED  ] lmsm_machine_suite.test_smax_instruction_enters_error_state_if_not_enough_elts (1 ms)
 [ RUN      ] lmsm_machine_suite.test_smin_instruction_sets_min_val_on_stack
 /home/parallels/autograder/csci-366-fall2023/grading/scripts/repos/aidan_rasmussen/lmsm/test/lmsm.cpp:354: Failure
 Expected equality of these values:
