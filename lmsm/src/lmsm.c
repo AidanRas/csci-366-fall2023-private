@@ -12,96 +12,242 @@
 
 void lmsm_cap_value(int * val){
    //TODO - implement capping the value pointed to by this pointer between 999 and -999
+   if (*val >= 999) {
+       *val = 999;
+   } else if (*val <= -999) {
+       *val = -999;
+   }
 }
 
-int lmsm_has_two_values_on_stack(lmsm *our_little_machine) {
+int lmsm_has_two_values_on_stack(lmsm *our_little_machine) { // not used
     //TODO - return 0 if there are not two values on the stack
-    return 1;
+    if (our_little_machine->stack_pointer != 198) {
+        return 1;
+    }
+    return 0;
 }
 
 //======================================================
 //  Instruction Implementation
 //======================================================
 
-void lmsm_i_jal(lmsm *our_little_machine) {
+void lmsm_i_jal(lmsm *our_little_machine) { // done
+    our_little_machine->return_address_pointer++;
+    our_little_machine->memory[our_little_machine->return_address_pointer] = our_little_machine->program_counter;
+    our_little_machine->program_counter = our_little_machine->memory[our_little_machine->stack_pointer];
+    our_little_machine->stack_pointer++;
+
 }
 
-void lmsm_i_ret(lmsm *our_little_machine) {
+void lmsm_i_ret(lmsm *our_little_machine) { // done
+    our_little_machine->program_counter = our_little_machine->memory[our_little_machine->return_address_pointer];
+    our_little_machine->return_address_pointer--;
 }
 
-void lmsm_i_push(lmsm *our_little_machine) {
+void lmsm_i_push(lmsm *our_little_machine) { // done
+    our_little_machine->stack_pointer--;
+    our_little_machine->memory[our_little_machine->stack_pointer] = our_little_machine->accumulator;
 }
 
-void lmsm_i_pop(lmsm *our_little_machine) {
+void lmsm_i_pop(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 199) {
+        our_little_machine->status = STATUS_HALTED;
+        our_little_machine->error_code = ERROR_BAD_STACK;
+    } else {
+        our_little_machine->accumulator = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->stack_pointer++;
+    }
 }
 
-void lmsm_i_dup(lmsm *our_little_machine) {
+void lmsm_i_dup(lmsm *our_little_machine) { // done
+    our_little_machine->stack_pointer--;
+    int val = our_little_machine->memory[our_little_machine->stack_pointer + 1];
+    our_little_machine->memory[our_little_machine->stack_pointer] = val;
 }
 
-void lmsm_i_drop(lmsm *our_little_machine) {
+void lmsm_i_drop(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 199) {
+        our_little_machine->status = STATUS_HALTED;
+        our_little_machine->error_code = ERROR_BAD_STACK;
+    } else {
+        our_little_machine->stack_pointer++;
+    }
 }
 
-void lmsm_i_swap(lmsm *our_little_machine) {
+void lmsm_i_swap(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 198) {
+        our_little_machine->status = STATUS_HALTED;
+        our_little_machine->error_code = ERROR_BAD_STACK;
+    } else {
+        int s1 = our_little_machine->memory[our_little_machine->stack_pointer + 1];
+        our_little_machine->memory[our_little_machine->stack_pointer + 1] = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->memory[our_little_machine->stack_pointer] = s1;
+    }
 }
 
-void lmsm_i_sadd(lmsm *our_little_machine) {
+void lmsm_i_sadd(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 199) {
+        int t1 = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->stack_pointer++;
+        int t2 = our_little_machine->memory[our_little_machine->stack_pointer];
+        int res = t1+t2;
+        if (res > 999) {
+            res = 999;
+        } else if (res < -999) {
+            res = -999;
+        }
+        our_little_machine->memory[our_little_machine->stack_pointer] = res;
+    }
 }
 
-void lmsm_i_ssub(lmsm *our_little_machine) {
+void lmsm_i_ssub(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 199) {
+        int t1 = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->stack_pointer++;
+        int t2 = our_little_machine->memory[our_little_machine->stack_pointer];
+        int res = t2-t1;
+        if (res < -999) {
+            res = -999;
+        } else if (res > 999) {
+            res = 999;
+        }
+        our_little_machine->memory[our_little_machine->stack_pointer] = res;
+    }
 }
 
-void lmsm_i_smax(lmsm *our_little_machine) {
+void lmsm_i_smax(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 198) {
+        our_little_machine->status = STATUS_HALTED;
+        our_little_machine->error_code = ERROR_BAD_STACK;
+    } else {
+        int t1 = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->stack_pointer++;
+        int t2 = our_little_machine->memory[our_little_machine->stack_pointer];
+        int res;
+        if (t1 > t2) {
+            res = t1;
+        } else {
+            res = t2;
+        }
+        our_little_machine->memory[our_little_machine->stack_pointer] = res;
+    }
 }
 
-void lmsm_i_smin(lmsm *our_little_machine) {
+void lmsm_i_smin(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 198) {
+        our_little_machine->status = STATUS_HALTED;
+        our_little_machine->error_code = ERROR_BAD_STACK;
+    } else {
+        int t1 = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->stack_pointer++;
+        int t2 = our_little_machine->memory[our_little_machine->stack_pointer];
+        int res;
+        if (t1 > t2) {
+            res = t2;
+        } else {
+            res = t1;
+        }
+        our_little_machine->memory[our_little_machine->stack_pointer] = res;
+    }
 }
 
-void lmsm_i_smul(lmsm *our_little_machine) {
+void lmsm_i_smul(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 198) {
+        our_little_machine->status = STATUS_HALTED;
+        our_little_machine->error_code = ERROR_BAD_STACK;
+    } else {
+        int t1 = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->stack_pointer++;
+        int t2 = our_little_machine->memory[our_little_machine->stack_pointer];
+        int res = t1*t2;
+        if (res < -999) {
+            res = -999;
+        } else if (res > 999) {
+            res = 999;
+        }
+        our_little_machine->memory[our_little_machine->stack_pointer] = res;
+    }
 }
 
-void lmsm_i_sdiv(lmsm *our_little_machine) {
+void lmsm_i_sdiv(lmsm *our_little_machine) { // done
+    if (our_little_machine->stack_pointer != 198) {
+        our_little_machine->status = STATUS_HALTED;
+        our_little_machine->error_code = ERROR_BAD_STACK;
+    } else {
+        int t1 = our_little_machine->memory[our_little_machine->stack_pointer];
+        our_little_machine->stack_pointer++;
+        int t2 = our_little_machine->memory[our_little_machine->stack_pointer];
+        int res = t2 / t1;
+        if (res < -999) {
+            res = -999;
+        } else if (res > 999) {
+            res = 999;
+        }
+        our_little_machine->memory[our_little_machine->stack_pointer] = res;
+    }
 }
 
 void lmsm_i_out(lmsm *our_little_machine) {
-    // TODO, append the current accumulator to the output_buffer in the LMSM
+    char temp[4];
+    char *out = our_little_machine->output_buffer;
+    int i = our_little_machine->accumulator;
+
+    sprintf(temp, "%d", i);
+    strcat(temp, " ");
+    strcat(out, temp);
 }
 
-void lmsm_i_inp(lmsm *our_little_machine) {
+void lmsm_i_inp(lmsm *our_little_machine) { // not used
+
     // TODO read a value from the command line and store it as an int in the accumulator
 }
 
-void lmsm_i_load(lmsm *our_little_machine, int location) {
+void lmsm_i_load(lmsm *our_little_machine, int location) { // done
+    our_little_machine->accumulator = our_little_machine->memory[location];
 }
 
-void lmsm_i_add(lmsm *our_little_machine, int location) {
+void lmsm_i_add(lmsm *our_little_machine, int location) { // done
+    our_little_machine->accumulator = our_little_machine->accumulator + our_little_machine->memory[location];
 }
 
-void lmsm_i_sub(lmsm *our_little_machine, int location) {
+void lmsm_i_sub(lmsm *our_little_machine, int location) { // done
+    our_little_machine->accumulator = our_little_machine->accumulator - our_little_machine->memory[location];
 }
 
-void lmsm_i_load_immediate(lmsm *our_little_machine, int value) {
+void lmsm_i_load_immediate(lmsm *our_little_machine, int value) { // done
+    our_little_machine->accumulator = value;
 }
 
-void lmsm_i_store(lmsm *our_little_machine, int location) {
+void lmsm_i_store(lmsm *our_little_machine, int location) { // done
+    our_little_machine->memory[location] = our_little_machine->accumulator;
 }
 
-void lmsm_i_halt(lmsm *our_little_machine) {
+void lmsm_i_halt(lmsm *our_little_machine) { // done
+    our_little_machine->status = STATUS_HALTED;
 }
 
-void lmsm_i_branch_unconditional(lmsm *our_little_machine, int location) {
+void lmsm_i_branch_unconditional(lmsm *our_little_machine, int location) { // done
+    our_little_machine->program_counter = location;
 }
 
-void lmsm_i_branch_if_zero(lmsm *our_little_machine, int location) {
+void lmsm_i_branch_if_zero(lmsm *our_little_machine, int location) { // done
+    if (our_little_machine->accumulator == 0)
+        our_little_machine->program_counter = location;
+
 }
 
-void lmsm_i_branch_if_positive(lmsm *our_little_machine, int location) {
+void lmsm_i_branch_if_positive(lmsm *our_little_machine, int location) { // done
+    if (our_little_machine->accumulator >= 0) {
+        our_little_machine->program_counter = location;
+    }
 }
 
 void lmsm_step(lmsm *our_little_machine) {
     // TODO : if the machine is not halted, we need to read the instruction in the memory slot
     //        pointed to by the program counter, bump the program counter then execute
     //        the instruction
-    if (our_little_machine->status != STATUS_HALTED) {
+
+    if (our_little_machine->status != STATUS_HALTED) { // done
         int next_instruction = our_little_machine->memory[our_little_machine->program_counter];
         our_little_machine->program_counter++;
         our_little_machine->current_instruction = next_instruction;
@@ -123,6 +269,52 @@ void lmsm_exec_instruction(lmsm *our_little_machine, int instruction) {
         lmsm_i_halt(our_little_machine);
     } else if (100 <= instruction && instruction <= 199) {
         lmsm_i_add(our_little_machine, instruction - 100);
+    } else if (200 <= instruction && instruction <= 299) {
+        lmsm_i_sub(our_little_machine, instruction - 200);
+    } else if (300 <= instruction && instruction <= 399) {
+        lmsm_i_store(our_little_machine, instruction - 300);
+    } else if (400 <= instruction && instruction <= 499) {
+        lmsm_i_load_immediate(our_little_machine, instruction - 400);
+    } else if (500 <= instruction && instruction <= 599) {
+        lmsm_i_load(our_little_machine, instruction - 500);
+    } else if (600 <= instruction && instruction <= 699) {
+        lmsm_i_branch_unconditional(our_little_machine, instruction - 600);
+    } else if (700 <= instruction && instruction <= 799) {
+        lmsm_i_branch_if_zero(our_little_machine, instruction - 700);
+    } else if (800 <= instruction && instruction <= 899) {
+        lmsm_i_branch_if_positive(our_little_machine, instruction - 800);
+    } else if (901 == instruction) {
+        lmsm_i_inp(our_little_machine);
+    } else if (902 == instruction) {
+        lmsm_i_out(our_little_machine);
+    } else if (000 == instruction) {
+        lmsm_i_halt(our_little_machine);
+    }  else if (911 == instruction) {
+        lmsm_i_ret(our_little_machine);
+    } else if (920 == instruction) {
+        lmsm_i_push(our_little_machine);
+    } else if (921 == instruction) {
+        lmsm_i_pop(our_little_machine);
+    } else if (922 == instruction) {
+        lmsm_i_dup(our_little_machine);
+    } else if (923 == instruction) {
+        lmsm_i_drop(our_little_machine);
+    } else if (924 == instruction) {
+        lmsm_i_swap(our_little_machine);
+    } else if (930 == instruction) {
+        lmsm_i_sadd(our_little_machine);
+    } else if (931 == instruction) {
+        lmsm_i_ssub(our_little_machine);
+    } else if (932 == instruction) {
+        lmsm_i_smul(our_little_machine);
+    } else if (933 == instruction) {
+        lmsm_i_sdiv(our_little_machine);
+    } else if (934 == instruction) {
+        lmsm_i_smax(our_little_machine);
+    } else if (935 == instruction) {
+        lmsm_i_smin(our_little_machine);
+    } else if (910 == instruction) {
+        lmsm_i_jal(our_little_machine);
     } else {
         our_little_machine->error_code = ERROR_UNKNOWN_INSTRUCTION;
         our_little_machine->status = STATUS_HALTED;
