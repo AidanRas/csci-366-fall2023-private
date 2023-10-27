@@ -82,7 +82,7 @@ Expected equality of these values:
   the_machine->output_buffer
     Which is: ""
   "10 10 "
-[  FAILED  ] lmsm_machine_suite.test_output_instruction (0 ms)
+[  FAILED  ] lmsm_machine_suite.test_output_instruction (1 ms)
 [ RUN      ] lmsm_machine_suite.test_halt_instruction
 /home/parallels/autograder/csci-366-fall2023/grading/scripts/repos/aidan_rasmussen/lmsm/test/lmsm.cpp:126: Failure
 Expected equality of these values:
@@ -199,7 +199,7 @@ Expected equality of these values:
   the_machine->memory[199]
     Which is: 0
   -10
-[  FAILED  ] lmsm_machine_suite.test_ssub_instruction_subtracts_the_values_on_the_stack_in_the_right_order (1 ms)
+[  FAILED  ] lmsm_machine_suite.test_ssub_instruction_subtracts_the_values_on_the_stack_in_the_right_order (0 ms)
 [ RUN      ] lmsm_machine_suite.test_ssub_instruction_enters_error_state_if_not_enough_elts
 /home/parallels/autograder/csci-366-fall2023/grading/scripts/repos/aidan_rasmussen/lmsm/test/lmsm.cpp:321: Failure
 Expected equality of these values:
